@@ -6,7 +6,7 @@ import com.apollographql.apollo3.network.okHttpClient
 import com.example.githubrepositorybrowserfm.BuildConfig
 import okhttp3.OkHttpClient
 
-class GithubApi {
+class GithubApi () {
     fun getApolloClient(): ApolloClient {
         check(Looper.myLooper() == Looper.getMainLooper()) {
             "Only the main thread can get the apolloClient instance"

@@ -10,7 +10,9 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.compose.rememberNavController
 import com.example.githubrepositorybrowserfm.ui.theme.GithubRepositoryBrowserFMTheme
 import com.example.githubrepositorybrowserfm.ui.theme.navigation.Navigation
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

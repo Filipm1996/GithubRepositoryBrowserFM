@@ -1,7 +1,7 @@
 package com.example.githubrepositorybrowserfm.di
 
 import com.apollographql.apollo3.ApolloClient
-import com.example.githubrepositorybrowserfm.data.GithubApi
+import com.example.githubrepositorybrowserfm.data.network.GithubApi
 import com.example.githubrepositorybrowserfm.data.network.NetworkRepository
 import com.example.githubrepositorybrowserfm.data.network.NetworkRepositoryImpl
 import dagger.Module
@@ -16,7 +16,8 @@ object Module {
 
     @Singleton
     @Provides
-    fun provideApolloClient() : ApolloClient = GithubApi().getApolloClient()
+    fun provideApolloClient(): ApolloClient = GithubApi().getApolloClient()
+
 
     @Singleton
     @Provides

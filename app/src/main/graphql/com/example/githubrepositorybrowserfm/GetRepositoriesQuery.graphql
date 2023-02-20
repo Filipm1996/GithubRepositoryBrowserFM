@@ -1,9 +1,0 @@
-query GetRepositoriesQuery {
-    repositoryOwner(login: "Filipm1996"){
-        repositories(orderBy : {field : NAME, direction :ASC}, first :100){
-            nodes{
-                name
-            }
-        }
-    }
-}

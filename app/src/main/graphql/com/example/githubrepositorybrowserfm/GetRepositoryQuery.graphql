@@ -1,0 +1,30 @@
+query GetRepository($userLogin: String!) {
+    repositoryOwner(login: $userLogin){
+        repositories(orderBy : {field : NAME, direction :ASC}, first :100){
+            edges @nonnull {
+                node @nonnull {
+                    ...nodeFields
+                }
+            }
+        }
+    }
+}
+
+fragment nodeFields on Repository {
+    name @nonnull
+    description
+    issues{
+        totalCount
+    }
+    ... on Repository{
+        defaultBranchRef{
+            target{
+                ... on Commit{
+                    history(first:1){
+                        totalCount
+                    }
+                }
+            }
+        }
+    }
+}

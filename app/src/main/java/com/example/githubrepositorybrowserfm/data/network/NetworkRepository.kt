@@ -1,10 +1,10 @@
 package com.example.githubrepositorybrowserfm.data.network
 
-import com.apollographql.apollo3.api.ApolloResponse
+import androidx.paging.PagingData
 import com.example.githubrepositorybrowserfm.GetRepositoryQuery
 import kotlinx.coroutines.flow.Flow
 
 interface NetworkRepository {
 
-    suspend fun getRepositories(user : String) : Flow<ApolloResponse<GetRepositoryQuery.Data>>
+    fun getRepositories(user: String): Flow<PagingData<GetRepositoryQuery.Node>>
 }

@@ -16,58 +16,94 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
+import androidx.paging.LoadState
+import androidx.paging.PagingData
+import androidx.paging.compose.collectAsLazyPagingItems
 import com.example.githubrepositorybrowserfm.R
 import com.example.githubrepositorybrowserfm.const.Const
-import com.example.githubrepositorybrowserfm.features.main.viewmodel.MainViewModel
+import com.example.githubrepositorybrowserfm.data.entities.RepositoryInfo
 import com.example.githubrepositorybrowserfm.ui.theme.Typography
-import com.google.accompanist.swiperefresh.SwipeRefresh
-import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 import com.google.gson.Gson
+import kotlinx.coroutines.flow.Flow
 
 @Composable
 fun MainScreen(
     navController: NavController,
     paddingValues: PaddingValues,
-    viewModel: MainViewModel = hiltViewModel()
+    repositories: Flow<PagingData<RepositoryInfo>>
 ) {
     val context = LocalContext.current
-    if (viewModel.errorMessage.value != "") {
-        Toast.makeText(context, viewModel.errorMessage.value, Toast.LENGTH_SHORT).show()
-        viewModel.errorMessage.value = ""
-    }
-    val swipeRefreshState = rememberSwipeRefreshState(isRefreshing = viewModel.isRefreshing.value)
+    val listOfRepo = repositories.collectAsLazyPagingItems()
 
-    SwipeRefresh(
-        state = swipeRefreshState,
-        onRefresh = viewModel::refresh,
+    Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(paddingValues)
-    ){
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .background(MaterialTheme.colorScheme.background),
-            horizontalAlignment = Alignment.CenterHorizontally
+            .background(MaterialTheme.colorScheme.background)
+            .padding(paddingValues),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Icon(
+            painterResource(id = R.drawable.ic_baseline_person_24),
+            contentDescription = "person avatar",
+            tint = MaterialTheme.colorScheme.onPrimary,
+            modifier = Modifier.padding(top = dimensionResource(id = R.dimen.margin_0_5x))
+        )
+        Text(
+            text = Const.USER,
+            style = Typography.titleLarge,
+            color = MaterialTheme.colorScheme.onPrimary,
+            modifier = Modifier.padding(bottom = dimensionResource(id = R.dimen.margin_0_5x))
+        )
+        LazyColumn(
+            modifier = Modifier.fillMaxWidth()
         ) {
-            Icon(
-                painterResource(id = R.drawable.ic_baseline_person_24),
-                contentDescription = "person avatar",
-                tint = MaterialTheme.colorScheme.onPrimary,
-                modifier = Modifier.padding(top = dimensionResource(id = R.dimen.margin_0_5x))
-            )
-            Text(
-                text = Const.USER,
-                style = Typography.titleLarge,
-                color = MaterialTheme.colorScheme.onPrimary,
-                modifier = Modifier.padding(dimensionResource(id = R.dimen.margin_0_5x))
-            )
-            LazyColumn(modifier = Modifier.fillMaxWidth()) {
-                items(viewModel.listOfRepositories.size) {
-                    val repository = viewModel.listOfRepositories[it]
-                    RepositoryItem(repositoryInfo = repository, onItemClick = { repoInfo ->
+            when (val state = listOfRepo.loadState.prepend) {
+                is LoadState.NotLoading -> Unit
+                is LoadState.Loading -> {
+                    item {
+                        Column(
+                            modifier = Modifier.fillMaxSize(),
+                            verticalArrangement = Arrangement.Center,
+                            horizontalAlignment = Alignment.CenterHorizontally
+                        ) {
+                            CircularProgressIndicator(modifier = Modifier.padding(16.dp))
+                        }
+                    }
+                }
+                is LoadState.Error -> {
+                    Toast.makeText(
+                        context,
+                        state.error.message ?: "Error",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
+            }
+            when (val state = listOfRepo.loadState.refresh) {
+                is LoadState.NotLoading -> Unit
+                is LoadState.Loading -> {
+                    item {
+                        Column(
+                            modifier = Modifier.fillMaxSize(),
+                            verticalArrangement = Arrangement.Center,
+                            horizontalAlignment = Alignment.CenterHorizontally
+                        ) {
+                            CircularProgressIndicator(modifier = Modifier.padding(16.dp))
+                        }
+                    }
+                }
+                is LoadState.Error -> {
+                    Toast.makeText(
+                        context,
+                        state.error.message ?: "Error",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
+            }
+            items(listOfRepo.itemCount) { position ->
+                val item = listOfRepo[position]
+                if (item != null) {
+                    RepositoryItem(repositoryInfo = item, onItemClick = { repoInfo ->
                         val json = Uri.encode(Gson().toJson(repoInfo))
                         navController.navigate("detail/$json")
                     }
@@ -75,14 +111,5 @@ fun MainScreen(
                 }
             }
         }
-    }
-    if (viewModel.isLoading.value) {
-        CircularProgressIndicator(
-            color = MaterialTheme.colorScheme.onSecondary,
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(paddingValues),
-            strokeWidth = 10.dp
-        )
     }
 }

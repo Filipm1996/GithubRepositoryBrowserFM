@@ -1,7 +1,9 @@
-query GetRepository($userLogin: String!) {
-    repositoryOwner(login: $userLogin){
-        repositories(orderBy : {field : NAME, direction :ASC}, first :100){
+query GetRepository($userLogin: String!, $first: Int!, $after: String) {
+    repositoryOwner(login: $userLogin) @nonnull {
+        repositories(first: $first, after: $after) @nonnull{
+            totalCount
             edges @nonnull {
+                cursor
                 node @nonnull {
                     ...nodeFields
                 }

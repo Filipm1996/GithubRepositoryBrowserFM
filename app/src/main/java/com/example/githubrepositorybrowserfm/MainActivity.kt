@@ -3,11 +3,13 @@ package com.example.githubrepositorybrowserfm
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.activity.viewModels
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.*
 import androidx.compose.ui.res.stringResource
 import androidx.navigation.compose.rememberNavController
+import com.example.githubrepositorybrowserfm.features.main.viewmodel.MainViewModel
 import com.example.githubrepositorybrowserfm.ui.theme.GithubRepositoryBrowserFMTheme
 import com.example.githubrepositorybrowserfm.ui.theme.Typography
 import com.example.githubrepositorybrowserfm.ui.theme.navigation.Navigation
@@ -15,6 +17,7 @@ import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
+    private val viewModel: MainViewModel by viewModels()
 
     @OptIn(ExperimentalMaterial3Api::class)
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -24,7 +27,7 @@ class MainActivity : ComponentActivity() {
                 val navController = rememberNavController()
                 Scaffold(
                     content = { paddingVaules ->
-                        Navigation(navController = navController, paddingVaules)
+                        Navigation(navController = navController, paddingVaules,viewModel.repositories)
                     },
                     topBar = {
                         TopAppBar(

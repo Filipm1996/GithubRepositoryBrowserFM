@@ -6,15 +6,21 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
+import androidx.paging.PagingData
 import com.example.githubrepositorybrowserfm.data.entities.RepositoryInfo
 import com.example.githubrepositorybrowserfm.features.detail.DetailScreen
 import com.example.githubrepositorybrowserfm.features.main.MainScreen
+import kotlinx.coroutines.flow.Flow
 
 @Composable
-fun Navigation(navController: NavHostController, paddingValues: PaddingValues) {
+fun Navigation(
+    navController: NavHostController,
+    paddingValues: PaddingValues,
+    repositories: Flow<PagingData<RepositoryInfo>>
+) {
     NavHost(navController = navController, startDestination = Screen.MainScreen.route) {
         composable(Screen.MainScreen.route) {
-            MainScreen(navController, paddingValues)
+            MainScreen(navController, paddingValues, repositories)
         }
         composable(
             Screen.DetailScreen.route,

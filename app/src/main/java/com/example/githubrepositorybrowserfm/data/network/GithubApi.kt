@@ -17,7 +17,7 @@ class GithubApi {
             .okHttpClient(okHttpClient)
             .addHttpHeader(
                 Const.HEADER_AUTHORIZATION,
-                "$Const.HEADER_AUTHORIZATION_BEARER ${BuildConfig.GITHUB_OAUTH_KEY}"
+                "${Const.HEADER_AUTHORIZATION_BEARER} ${BuildConfig.GITHUB_OAUTH_KEY}"
             )
             .build()
     }

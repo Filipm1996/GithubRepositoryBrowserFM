@@ -8,7 +8,7 @@ import androidx.paging.map
 import com.example.githubrepositorybrowserfm.GetRepositoryQuery
 import com.example.githubrepositorybrowserfm.const.Const
 import com.example.githubrepositorybrowserfm.data.entities.RepositoryInfo
-import com.example.githubrepositorybrowserfm.data.network.NetworkRepositoryImpl
+import com.example.githubrepositorybrowserfm.data.network.NetworkRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
@@ -16,12 +16,12 @@ import javax.inject.Inject
 
 @HiltViewModel
 class MainViewModel @Inject constructor(
-    networkRepository: NetworkRepositoryImpl
+    networkRepository: NetworkRepository
 ) : ViewModel() {
 
     val repositories: Flow<PagingData<RepositoryInfo>> =
         networkRepository.getRepositories(Const.USER).map { response ->
-            response.map { node->
+            response.map { node ->
                 convertToRepositoryInfo(node)
             }
         }.cachedIn(viewModelScope)
